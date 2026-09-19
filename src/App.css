@@ -1,3 +1,8 @@
+/* =========================================================
+   BHUKAVACH — MINE ROVER DASHBOARD
+   Industrial Control Room UI
+   ========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -13,15 +18,22 @@ body,
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: #0b1115;
+  overflow: hidden;
 }
 
+
+/* =========================================================
+   MAIN DASHBOARD
+   ========================================================= */
+
 .dashboard {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background: #0b1115;
   color: #edf3f5;
   overflow: hidden;
 }
+
 
 /* =========================================================
    TOP BAR
@@ -29,10 +41,12 @@ body {
 
 .topbar {
   height: 9vh;
-  min-height: 70px;
+  min-height: 64px;
   background: #0d151a;
   border-bottom: 1px solid #263943;
-  padding: 1.2vh 1.8vw;
+
+  padding: 1vh 1.6vw;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -41,15 +55,17 @@ body {
 .topbar h1 {
   margin: 0;
   color: #f1f5f6;
+
   font-size: clamp(22px, 1.9vw, 32px);
   font-weight: 700;
   letter-spacing: 2px;
 }
 
 .topbar p {
-  margin: 0.5vh 0 0;
+  margin: 0.4vh 0 0;
+
   color: #8da9b8;
-  font-size: clamp(10px, 0.75vw, 13px);
+  font-size: clamp(10px, 0.72vw, 13px);
 }
 
 .topbar-actions {
@@ -62,15 +78,17 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+
   color: #b8c8cf;
-  font-size: clamp(10px, 0.75vw, 12px);
+  font-size: clamp(10px, 0.72vw, 12px);
   font-weight: bold;
   letter-spacing: 0.5px;
 }
 
 .status-dot {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
+
   border-radius: 50%;
   background: #7b858a;
 }
@@ -78,12 +96,16 @@ body {
 .fullscreen-button {
   background: #132027;
   color: #d9e2e6;
+
   border: 1px solid #334a56;
   border-radius: 5px;
-  padding: 8px 14px;
+
+  padding: 7px 13px;
+
   font-size: 11px;
   font-weight: bold;
   letter-spacing: 0.7px;
+
   cursor: pointer;
   transition: 0.2s ease;
 }
@@ -93,93 +115,136 @@ body {
   border-color: #55727f;
 }
 
+
 /* =========================================================
-   MAIN DASHBOARD LAYOUT
+   MAIN DASHBOARD GRID
    ========================================================= */
 
 .dashboard-content {
   width: 100%;
   height: 91vh;
-  padding: 1.2vh 1.6vw;
+
+  padding: 1vh 1.4vw;
+
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+
+  /*
+     Total row height is intentionally kept below
+     the available 91vh so the dashboard fits cleanly.
+  */
   grid-template-rows:
+    9vh
     10vh
-    11vh
-    15vh
-    35vh
-    14vh;
-  gap: 1.2vh 1.2vw;
+    13vh
+    30vh
+    18vh;
+
+  gap: 1vh 1vw;
+
   overflow: hidden;
 }
 
+
 /* =========================================================
-   TOP STATUS
+   TOP STATUS CARDS
    ========================================================= */
 
 .overview-grid {
   grid-column: 1 / -1;
+
   height: 100%;
+
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.2vw;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 1vw;
 }
 
 .status-card {
   height: 100%;
+
   background: linear-gradient(
     145deg,
     #101a20,
     #0d151a
   );
+
   border: 1px solid #29404c;
   border-radius: 7px;
-  padding: 1.2vh 1.1vw;
+
+  padding: 0.8vh 1vw;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
+
   position: relative;
   overflow: hidden;
 }
 
 .status-card::before {
   content: "";
+
   position: absolute;
+
   left: 0;
   top: 0;
+
   width: 3px;
   height: 100%;
+
   background: #1d6f78;
   opacity: 0.8;
 }
 
 .status-card h3 {
-  margin: 0 0 1vh;
+  margin: 0 0 0.6vh;
+
   color: #91b3c3;
-  font-size: clamp(10px, 0.50vw, 15px);
+
+  font-size: clamp(9px, 0.55vw, 12px);
+
   letter-spacing: 1px;
   text-align: center;
 }
 
 .status-value {
-  font-size: clamp(15px, 1.3vw, 20px);
+  font-size: clamp(15px, 1.25vw, 20px);
+
   font-weight: 700;
   text-align: center;
+
   color: #eef4f6;
 }
 
 .status-card p {
-  margin: 0.8vh 0 0;
+  margin: 0.5vh 0 0;
+
   color: #718792;
-  font-size: clamp(10px, 0.50vw, 15px);
+
+  font-size: clamp(9px, 0.5vw, 11px);
+
   text-align: center;
 }
 
-/* Rover */
+
+/* =========================================================
+   ROVER STATUS
+   ========================================================= */
 
 .rover-clickable {
   cursor: pointer;
   transition: 0.2s ease;
+}
+
+.rover-clickable:hover {
+  background: linear-gradient(
+    145deg,
+    #132128,
+    #0e181d
+  );
 }
 
 .rover-inactive {
@@ -202,7 +267,10 @@ body {
   }
 }
 
-/* Communication */
+
+/* =========================================================
+   COMMUNICATION
+   ========================================================= */
 
 .communication-active {
   color: #35e57b;
@@ -211,6 +279,7 @@ body {
 .communication-inactive {
   color: #e05252;
 }
+
 
 /* =========================================================
    PROTOTYPE SENSOR INPUT
@@ -223,66 +292,90 @@ body {
 
 .panel {
   height: 100%;
+
   background: linear-gradient(
     145deg,
     #10191e,
     #0d1519
   );
+
   border: 1px solid #29404c;
   border-radius: 7px;
+
   overflow: hidden;
 }
 
 .panel-header {
-  height: 30%;
+  height: 28px;
   min-height: 28px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: 0 1vw;
+
   border-bottom: 1px solid #233740;
 }
 
 .panel-header h2 {
   margin: 0;
+
   color: #94b8c9;
-  font-size: clamp(10px, 0.72vw, 12px);
+
+  font-size: clamp(10px, 0.7vw, 12px);
+
   font-weight: bold;
   letter-spacing: 1px;
 }
 
 .panel-header span {
   color: #718b97;
-  font-size: clamp(9px, 0.62vw, 11px);
+
+  font-size: clamp(9px, 0.6vw, 11px);
 }
 
 .sensor-input-grid {
-  height: 70%;
+  height: calc(100% - 28px);
+
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.7vw;
-  padding: 0.7vh 0.8vw;
+
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+
+  gap: 0.6vw;
+
+  padding: 0.6vh 0.7vw;
 }
 
 .sensor-control {
   height: 100%;
+
   display: grid;
-  grid-template-columns: 30px 1fr 30px;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+
   align-items: center;
+
   background: #091015;
+
   border: 1px solid #304650;
   border-radius: 5px;
+
   overflow: hidden;
 }
 
 .sensor-control button {
   height: 100%;
+
   border: none;
+
   background: #13242c;
   color: #a9c3cf;
-  font-size: 17px;
+
+  font-size: 16px;
   font-weight: bold;
+
   cursor: pointer;
+
   transition: 0.15s ease;
 }
 
@@ -297,12 +390,16 @@ body {
 
 .sensor-value {
   width: 100%;
+
   border: none;
   outline: none;
+
   background: #080d10;
   color: #f0f5f7;
+
   text-align: center;
-  font-size: clamp(12px, 0.8vw, 14px);
+
+  font-size: clamp(11px, 0.75vw, 14px);
   font-weight: bold;
 }
 
@@ -317,6 +414,7 @@ body {
   appearance: textfield;
 }
 
+
 /* =========================================================
    ENVIRONMENTAL MONITORING
    ========================================================= */
@@ -327,44 +425,61 @@ body {
 }
 
 .sensor-grid {
-  height: 70%;
+  height: calc(100% - 28px);
+
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.8vw;
-  padding: 0.8vh 0.8vw;
+
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+
+  gap: 0.7vw;
+
+  padding: 0.7vh 0.7vw;
 }
 
 .sensor-card {
   background: #0b1115;
+
   border: 1px solid #263b45;
   border-radius: 6px;
-  padding: 0.8vh 0.6vw;
+
+  padding: 0.6vh 0.5vw;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   text-align: center;
+
   position: relative;
 }
 
 .sensor-card span {
   color: #83a1ae;
-  font-size: clamp(9px, 0.65vw, 11px);
+
+  font-size: clamp(9px, 0.62vw, 11px);
+
   letter-spacing: 0.5px;
 }
 
 .sensor-card strong {
-  margin-top: 0.9vh;
+  margin-top: 0.6vh;
+
   color: #edf4f6;
-  font-size: clamp(17px, 1.35vw, 22px);
+
+  font-size: clamp(16px, 1.25vw, 22px);
 }
 
 .danger-indicator {
   display: inline-block;
+
   margin-left: 7px;
+
   color: #ff5353;
+
   font-size: 16px;
   font-weight: bold;
+
   animation: dangerBlink 0.8s infinite;
 }
 
@@ -379,12 +494,14 @@ body {
   }
 }
 
+
 /* =========================================================
-   MISSION DATA
+   MISSION DATA / GRAPHS
    ========================================================= */
 
 .mission-data-section {
   grid-column: 1 / -1;
+
   height: 100%;
   min-height: 0;
 }
@@ -394,27 +511,32 @@ body {
   flex-direction: column;
 }
 
-/* Compact Mission Data header */
 .mission-data-section .panel-header {
-  height: 15%;
-  min-height: 24px;
+  height: 28px;
+  min-height: 28px;
+
   flex-shrink: 0;
 }
 
-/* Give the charts the recovered space */
 .mission-chart-grid {
   flex: 1;
   min-height: 0;
+
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 1fr;
-  gap: 0.7vh 0.7vw;
-  padding: 0.7vh 0.7vw;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+
+  gap: 0.6vh 0.6vw;
+
+  padding: 0.6vh 0.6vw;
+
   overflow-y: auto;
 }
 
 .mission-chart-grid::-webkit-scrollbar {
-  width: 7px;
+  width: 6px;
 }
 
 .mission-chart-grid::-webkit-scrollbar-track {
@@ -428,59 +550,85 @@ body {
 
 .mission-chart-card {
   min-height: 0;
+
   background: #0a1014;
+
   border: 1px solid #29404b;
   border-radius: 5px;
-  padding: 0.6vh 0.6vw;
+
+  padding: 0.5vh 0.5vw;
+
   overflow: hidden;
 }
 
 .mission-chart-card h3 {
-  margin: 0 0 0.2vh;
+  margin: 0 0 0.1vh;
+
   color: #91b3c2;
-  font-size: clamp(9px, 0.65vw, 11px);
+
+  font-size: clamp(8px, 0.6vw, 11px);
+
   letter-spacing: 0.8px;
 }
 
+
 /* =========================================================
-   CAMERA SECTION
+   CAMERA + THERMAL SECTION
    ========================================================= */
 
 .visual-grid {
   grid-column: 1 / 5;
+
   height: 100%;
+
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.2vw;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 1vw;
 }
 
 .camera-panel {
   height: 100%;
+
   background: linear-gradient(
     145deg,
     #10191e,
     #0d1519
   );
+
   border: 1px solid #29404c;
   border-radius: 7px;
+
   overflow: hidden;
 }
 
+.camera-panel .panel-header {
+  height: 28px;
+}
+
 .camera-placeholder {
-  height: 72%;
-  margin: 0.8vh 0.8vw;
+  height: calc(100% - 40px);
+
+  margin: 0.6vh 0.6vw;
+
   background:
     radial-gradient(
       circle at center,
       #17262d 0%,
       #0a1014 65%
     );
+
   border: 1px dashed #38515c;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   color: #607b88;
-  font-size: clamp(9px, 0.68vw, 12px);
+
+  font-size: clamp(9px, 0.65vw, 12px);
+
   letter-spacing: 1px;
 }
 
@@ -493,105 +641,252 @@ body {
     );
 }
 
+
 /* =========================================================
-   SYSTEM STATUS
+   SYSTEM STATUS / ALERT PANEL
    ========================================================= */
 
 .alert-panel {
   grid-column: 5 / -1;
+
   height: 100%;
   min-height: 0;
+
   background: linear-gradient(
     145deg,
     #10191e,
     #0d1519
   );
+
   border: 1px solid #29404c;
   border-radius: 7px;
-  padding: 1vh 1vw;
+
+  padding: 0.8vh 0.9vw;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 1vw;
+
   overflow: hidden;
 }
 
 .alert-panel h2 {
   margin: 0;
+
   color: #91b3c2;
-  font-size: clamp(10px, 0.72vw, 12px);
+
+  font-size: clamp(10px, 0.7vw, 12px);
+
   letter-spacing: 1px;
 }
 
 .normal-status {
   color: #35e57b;
-  font-size: clamp(10px, 0.72vw, 12px);
+
+  font-size: clamp(10px, 0.7vw, 12px);
+
   font-weight: bold;
+
   white-space: nowrap;
 }
 
 .alert-status {
   flex: 1;
+
   display: flex;
+
   flex-wrap: wrap;
+
   justify-content: flex-end;
+
   gap: 0.4vw;
 }
 
 .alert-status div {
   background: #261719;
+
   border: 1px solid #71383c;
+
   border-radius: 4px;
+
   padding: 0.5vh 0.6vw;
+
   color: #ff6060;
-  font-size: clamp(9px, 0.62vw, 11px);
+
+  font-size: clamp(9px, 0.6vw, 11px);
+
   font-weight: bold;
+
   white-space: nowrap;
 }
 
+
 /* =========================================================
-   CHART EMPTY STATE
+   EMPTY CHART STATE
    ========================================================= */
 
 .chart-empty {
   width: 100%;
   height: 90%;
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   color: #58707b;
+
   font-size: 10px;
+
   letter-spacing: 1px;
 }
 
+
 /* =========================================================
-   RESPONSIVE
+   MISSION REPORT POPUP
+   ========================================================= */
+
+.report-popup-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 99999;
+
+  background: rgba(0, 0, 0, 0.78);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.report-popup {
+  width: min(420px, 90vw);
+
+  background: #151e23;
+
+  border: 1px solid #56646b;
+
+  border-top: 4px solid #f5a623;
+
+  border-radius: 6px;
+
+  padding: 28px;
+
+  color: #edf3f5;
+
+  text-align: center;
+
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.report-popup h2 {
+  margin: 0 0 14px;
+
+  color: #f5a623;
+
+  font-size: 22px;
+
+  letter-spacing: 1px;
+}
+
+.report-popup p {
+  margin: 8px 0;
+
+  color: #b9c5ca;
+
+  font-size: 14px;
+}
+
+.report-popup strong {
+  color: #edf3f5;
+}
+
+.report-popup-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-top: 24px;
+}
+
+.report-popup-actions button {
+  padding: 10px 18px;
+
+  border: 1px solid #56646b;
+
+  border-radius: 4px;
+
+  background: #202b31;
+
+  color: #edf3f5;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.report-popup-actions button:hover {
+  background: #2c3940;
+}
+
+.report-popup-actions button:last-child {
+  background: #f5a623;
+
+  border-color: #f5a623;
+
+  color: #11181c;
+}
+
+.report-popup-actions button:last-child:hover {
+  background: #ffb83d;
+}
+
+
+/* =========================================================
+   RESPONSIVE — LAPTOP / SMALL DESKTOP
    ========================================================= */
 
 @media (max-width: 1100px) {
+
   .dashboard-content {
     grid-template-rows:
-      15vh
+      10vh
       12vh
-      20vh
+      15vh
       28vh
-      12vh;
+      18vh;
   }
 
   .sensor-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sensor-input-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .mission-chart-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
   }
 }
 
+
+/* =========================================================
+   RESPONSIVE — TABLET / MOBILE
+   ========================================================= */
+
 @media (max-width: 800px) {
+
   html,
   body,
   #root {
@@ -601,24 +896,41 @@ body {
   .dashboard {
     min-height: 100vh;
     height: auto;
+
     overflow: visible;
+  }
+
+  .topbar {
+    height: auto;
+    min-height: 75px;
+
+    padding: 12px 16px;
+  }
+
+  .topbar-actions {
+    gap: 8px;
   }
 
   .dashboard-content {
     height: auto;
     min-height: 100vh;
+
     display: flex;
     flex-direction: column;
+
     overflow: visible;
+
+    padding: 12px;
   }
 
   .overview-grid {
     height: auto;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .status-card {
-    min-height: 120px;
+    min-height: 100px;
   }
 
   .sensor-input-section,
@@ -630,17 +942,22 @@ body {
   }
 
   .sensor-input-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
     min-height: 120px;
   }
 
   .sensor-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
     min-height: 220px;
   }
 
   .mission-chart-grid {
     grid-template-columns: 1fr;
+
+    grid-template-rows: none;
+
     max-height: 500px;
   }
 
@@ -659,4 +976,136 @@ body {
   .alert-panel {
     min-height: 80px;
   }
+}
+
+/* =========================================================
+   TEXT ALIGNMENT FIX
+   ========================================================= */
+
+/* Top status cards */
+.status-card {
+  padding: 0.5vh 1vw;
+  justify-content: center;
+}
+
+.status-card h3 {
+  margin: 0 0 0.35vh;
+  line-height: 1.2;
+}
+
+.status-value {
+  line-height: 1.2;
+}
+
+.status-card p {
+  margin: 0.35vh 0 0;
+  line-height: 1.2;
+}
+
+
+/* Environmental monitoring cards */
+.sensor-card {
+  padding: 0.4vh 0.5vw;
+  justify-content: center;
+}
+
+.sensor-card span {
+  line-height: 1.2;
+}
+
+.sensor-card strong {
+  margin-top: 0.45vh;
+  line-height: 1.15;
+}
+
+
+/* Keep panel headings vertically centered */
+.panel-header {
+  align-items: center;
+}
+
+.panel-header h2,
+.panel-header span {
+  line-height: 1;
+}
+
+
+/* Mission chart headings */
+.mission-chart-card h3 {
+  line-height: 1.2;
+  padding: 0;
+}
+
+
+/* Camera headings */
+.camera-panel .panel-header h2,
+.camera-panel .panel-header span {
+  line-height: 1;
+}
+
+/* =========================================================
+   MISSION REPORT POPUP
+   ========================================================= */
+
+.report-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.report-popup {
+  width: min(460px, 90vw);
+  background: #15191d;
+  border: 1px solid #f0b323;
+  border-radius: 10px;
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+.report-popup h2 {
+  margin: 0 0 14px;
+  color: #f0b323;
+  font-size: 24px;
+}
+
+.report-popup p {
+  margin: 10px 0;
+  color: #d8dde2;
+  font-size: 14px;
+}
+
+.report-popup strong {
+  color: #ffffff;
+}
+
+.report-popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.report-popup-actions button {
+  border: 1px solid #f0b323;
+  background: #22282d;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.report-popup-actions button:hover {
+  background: #f0b323;
+  color: #111111;
+}
+
+.report-popup-actions button:last-child {
+  background: #f0b323;
+  color: #111111;
 }

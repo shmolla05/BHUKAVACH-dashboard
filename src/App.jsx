@@ -10,6 +10,9 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
 function App() {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [roverActive, setRoverActive] = useState(false)
@@ -17,6 +20,8 @@ function App() {
 
   const [missionSeconds, setMissionSeconds] = useState(0)
   const [missionHistory, setMissionHistory] = useState([])
+  const [missionAlerts, setMissionAlerts] = useState([])
+  const [showReportPopup, setShowReportPopup] = useState(false)
 
   const [sensorData, setSensorData] = useState({
     oxygen: 20.9,
@@ -40,26 +45,65 @@ function App() {
     }
 
     const missionInterval = setInterval(() => {
-      setMissionSeconds((seconds) => {
-        const nextSeconds = seconds + 1
-        const currentSensors = sensorDataRef.current
+  setMissionSeconds((seconds) => {
+    const nextSeconds = seconds + 1
+    const currentSensors = sensorDataRef.current
 
-        setMissionHistory((history) => [
-          ...history,
-          {
-            time: nextSeconds,
-            oxygen: currentSensors.oxygen,
-            co2: currentSensors.co2,
-            methane: currentSensors.methane,
-            temperature: currentSensors.temperature,
-            humidity: currentSensors.humidity,
-            pressure: currentSensors.pressure,
-          },
-        ])
+    setMissionHistory((history) => [
+      ...history,
+      {
+        time: nextSeconds,
+        oxygen: currentSensors.oxygen,
+        co2: currentSensors.co2,
+        methane: currentSensors.methane,
+        temperature: currentSensors.temperature,
+        humidity: currentSensors.humidity,
+        pressure: currentSensors.pressure,
+      },
+    ])
 
-        return nextSeconds
-      })
-    }, 1000)
+    const alerts = []
+
+    if (currentSensors.oxygen < safetyLimits.oxygenMin) {
+      alerts.push(`Low Oxygen: ${currentSensors.oxygen}%`)
+    }
+
+    if (currentSensors.co2 > safetyLimits.co2Max) {
+      alerts.push(`High CO₂: ${currentSensors.co2} ppm`)
+    }
+
+    if (currentSensors.methane > safetyLimits.methaneMax) {
+      alerts.push(`High Methane: ${currentSensors.methane}%`)
+    }
+
+    if (currentSensors.temperature > safetyLimits.temperatureMax) {
+      alerts.push(`High Temperature: ${currentSensors.temperature}°C`)
+    }
+
+    if (currentSensors.humidity > safetyLimits.humidityMax) {
+      alerts.push(`High Humidity: ${currentSensors.humidity}%`)
+    }
+
+    if (
+      currentSensors.pressure < safetyLimits.pressureMin ||
+      currentSensors.pressure > safetyLimits.pressureMax
+    ) {
+      alerts.push(`Abnormal Air Pressure: ${currentSensors.pressure} kPa`)
+    }
+
+    if (alerts.length > 0) {
+      setMissionAlerts((existingAlerts) => [
+        ...existingAlerts,
+        {
+          time: nextSeconds,
+          alerts,
+        },
+      ])
+    }
+
+    return nextSeconds
+  })
+}, 1000)
 
     return () => clearInterval(missionInterval)
   }, [roverActive])
@@ -122,16 +166,19 @@ function App() {
 
   // Toggle rover
   const handleRoverToggle = () => {
-    if (!roverActive) {
-      // Starting a new mission
-      setMissionSeconds(0)
-      setMissionHistory([])
-      setRoverActive(true)
-    } else {
-      // Ending the current mission
-      setRoverActive(false)
-    }
+  if (!roverActive) {
+    // Starting a new mission
+    setMissionSeconds(0)
+    setMissionHistory([])
+    setMissionAlerts([])
+    setShowReportPopup(false)
+    setRoverActive(true)
+  } else {
+    // Ending the current mission
+    setRoverActive(false)
+    setShowReportPopup(true)
   }
+}
 
   // Detect internet/network status
   useEffect(() => {
@@ -182,6 +229,377 @@ function App() {
       minutes
     ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
   }
+
+  const formatMissionSeconds = (totalSeconds) => {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+
+  return `${String(minutes).padStart(2, '0')}:${String(
+    seconds
+  ).padStart(2, '0')}`
+}
+
+  const generateMissionReport = () => {
+  const doc = new jsPDF()
+
+  const reportDate = new Date().toLocaleString()
+
+  doc.setFontSize(20)
+  doc.text('BHUKAVACH MISSION REPORT', 14, 20)
+
+  doc.setFontSize(11)
+  doc.text(`Mission Date: ${reportDate}`, 14, 30)
+  doc.text(`Mission Duration: ${formatMissionTime()}`, 14, 37)
+  doc.text(
+    `Recorded Data Points: ${missionHistory.length}`,
+    14,
+    44
+  )
+
+  doc.setFontSize(14)
+  doc.text('Mission Summary', 14, 56)
+
+  const latestData =
+    missionHistory.length > 0
+      ? missionHistory[missionHistory.length - 1]
+      : sensorData
+
+      const recordedData =
+  missionHistory.length > 0
+    ? missionHistory
+    : [sensorData]
+
+const getStatistics = (key) => {
+  const values = recordedData.map((item) => Number(item[key]))
+
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const average =
+    values.reduce((sum, value) => sum + value, 0) /
+    values.length
+
+  return {
+    min,
+    max,
+    average,
+  }
+}
+
+const statistics = [
+  ['Oxygen (O₂)', '%', getStatistics('oxygen')],
+  ['Carbon Dioxide (CO₂)', 'ppm', getStatistics('co2')],
+  ['Methane (CH₄)', '%', getStatistics('methane')],
+  ['Temperature', '°C', getStatistics('temperature')],
+  ['Humidity', '%', getStatistics('humidity')],
+  ['Air Pressure', 'kPa', getStatistics('pressure')],
+]
+
+  autoTable(doc, {
+    startY: 62,
+    head: [['Parameter', 'Value']],
+    body: [
+      ['Oxygen (O₂)', `${latestData.oxygen}%`],
+      ['Carbon Dioxide (CO₂)', `${latestData.co2} ppm`],
+      ['Methane (CH₄)', `${latestData.methane}%`],
+      ['Temperature', `${latestData.temperature} °C`],
+      ['Humidity', `${latestData.humidity}%`],
+      ['Air Pressure', `${latestData.pressure} kPa`],
+    ],
+  })
+
+  const statisticsStartY = doc.lastAutoTable.finalY + 12
+
+doc.setFontSize(14)
+doc.text('Mission Statistics', 14, statisticsStartY)
+
+const statisticsRows = statistics.map(
+  ([parameter, unit, values]) => [
+    parameter,
+    `${values.min.toFixed(2)} ${unit}`,
+    `${values.max.toFixed(2)} ${unit}`,
+    `${values.average.toFixed(2)} ${unit}`,
+  ]
+)
+
+autoTable(doc, {
+  startY: statisticsStartY + 5,
+  head: [['Parameter', 'Minimum', 'Maximum', 'Average']],
+  body: statisticsRows,
+  styles: {
+    fontSize: 8,
+  },
+})
+
+  const alertStartY = doc.lastAutoTable.finalY + 15
+
+  doc.setFontSize(14)
+  doc.text('Mission Alerts', 14, alertStartY)
+
+  if (missionAlerts.length === 0) {
+  doc.setFontSize(10)
+  doc.text(
+    'NO SAFETY ALERTS RECORDED DURING THE MISSION',
+    14,
+    alertStartY + 8
+  )
+} else {
+    const alertRows = []
+
+    missionAlerts.forEach((event) => {
+      event.alerts.forEach((alert) => {
+        alertRows.push([
+          formatMissionSeconds(event.time),
+          alert,
+        ])
+      })
+    })
+
+    autoTable(doc, {
+      startY: alertStartY + 5,
+      head: [['Mission Time', 'Alert']],
+      body: alertRows,
+    })
+  }
+
+  let dataStartY
+
+if (missionAlerts.length === 0) {
+  dataStartY = alertStartY + 28
+} else {
+  dataStartY = doc.lastAutoTable.finalY + 20
+}
+
+  doc.setFontSize(14)
+  doc.text('Mission Data', 14, dataStartY)
+
+  const dataRows = missionHistory.map((data) => [
+    formatMissionSeconds(data.time),
+    data.oxygen,
+    data.co2,
+    data.methane,
+    data.temperature,
+    data.humidity,
+    data.pressure,
+  ])
+
+  autoTable(doc, {
+    startY: dataStartY + 5,
+    head: [[
+      'Time',
+      'O₂ %',
+      'CO₂ ppm',
+      'CH₄ %',
+      'Temp °C',
+      'Humidity %',
+      'Pressure kPa',
+    ]],
+    body: dataRows,
+    styles: {
+      fontSize: 7,
+    },
+  })
+
+  if (doc.lastAutoTable.finalY > 210) {
+  doc.addPage()
+}
+
+  if (doc.lastAutoTable.finalY > 210) {
+  doc.addPage()
+}
+
+const temperatureGraphY =
+  doc.lastAutoTable.finalY + 15
+
+doc.setFontSize(14)
+doc.text(
+  'Temperature Trend',
+  14,
+  temperatureGraphY
+)
+
+if (missionHistory.length > 0) {
+  const graphStartX = 30
+  const graphStartY = temperatureGraphY + 10
+  const graphWidth = 155
+  const graphHeight = 70
+
+  const temperatures = missionHistory.map(
+    (data) => Number(data.temperature)
+  )
+
+  const actualMin = Math.min(...temperatures)
+  const actualMax = Math.max(...temperatures)
+
+  // Add visual space around the actual temperature range
+  let graphMin
+  let graphMax
+
+  if (actualMin === actualMax) {
+    graphMin = actualMin - 1
+    graphMax = actualMax + 1
+  } else {
+    const range = actualMax - actualMin
+    const padding = Math.max(range * 0.1, 1)
+
+    graphMin = actualMin - padding
+    graphMax = actualMax + padding
+  }
+
+  const graphRange = graphMax - graphMin
+
+  // Graph border
+  doc.setDrawColor(120, 120, 120)
+  doc.rect(
+    graphStartX,
+    graphStartY,
+    graphWidth,
+    graphHeight
+  )
+
+  // Horizontal grid lines and Y-axis labels
+  doc.setFontSize(7)
+
+  for (let i = 0; i <= 4; i++) {
+    const ratio = i / 4
+
+    const y =
+      graphStartY +
+      graphHeight -
+      ratio * graphHeight
+
+    const temperature =
+      graphMin + ratio * graphRange
+
+    doc.setDrawColor(220, 220, 220)
+
+    if (i > 0 && i < 4) {
+      doc.line(
+        graphStartX,
+        y,
+        graphStartX + graphWidth,
+        y
+      )
+    }
+
+    doc.setTextColor(40, 40, 40)
+
+    doc.text(
+      `${temperature.toFixed(1)} °C`,
+      8,
+      y + 2
+    )
+  }
+
+  // X-axis time labels
+  const totalPoints = missionHistory.length
+
+  const timePositions = [
+    0,
+    Math.floor((totalPoints - 1) / 2),
+    totalPoints - 1,
+  ]
+
+  timePositions.forEach((index) => {
+    const data = missionHistory[index]
+
+    const x =
+      totalPoints === 1
+        ? graphStartX
+        : graphStartX +
+          (index / (totalPoints - 1)) *
+            graphWidth
+
+    const timeLabel =
+      formatMissionSeconds(data.time)
+
+    doc.setFontSize(7)
+    doc.setTextColor(40, 40, 40)
+
+    doc.text(
+      timeLabel,
+      x - 8,
+      graphStartY + graphHeight + 8
+    )
+
+    doc.setDrawColor(150, 150, 150)
+
+    doc.line(
+      x,
+      graphStartY + graphHeight,
+      x,
+      graphStartY + graphHeight + 3
+    )
+  })
+
+  // X-axis title
+  doc.setFontSize(8)
+
+  doc.text(
+    'Mission Time',
+    graphStartX + 65,
+    graphStartY + graphHeight + 17
+  )
+
+  // Temperature line
+  doc.setDrawColor(80, 80, 80)
+  doc.setLineWidth(1)
+
+  for (let i = 0; i < missionHistory.length - 1; i++) {
+    const current = missionHistory[i]
+    const next = missionHistory[i + 1]
+
+    const x1 =
+      graphStartX +
+      (i / (missionHistory.length - 1)) *
+        graphWidth
+
+    const x2 =
+      graphStartX +
+      ((i + 1) /
+        (missionHistory.length - 1)) *
+        graphWidth
+
+    const y1 =
+      graphStartY +
+      graphHeight -
+      ((current.temperature - graphMin) /
+        graphRange) *
+        graphHeight
+
+    const y2 =
+      graphStartY +
+      graphHeight -
+      ((next.temperature - graphMin) /
+        graphRange) *
+        graphHeight
+
+    doc.line(x1, y1, x2, y2)
+  }
+
+  // Show a visible point when temperature is constant
+  if (
+    missionHistory.length > 1 &&
+    actualMin === actualMax
+  ) {
+    const constantY =
+      graphStartY +
+      graphHeight -
+      ((actualMin - graphMin) /
+        graphRange) *
+        graphHeight
+
+    doc.setLineWidth(1.5)
+
+    doc.line(
+      graphStartX,
+      constantY,
+      graphStartX + graphWidth,
+      constantY
+    )
+  }
+}
+doc.save('BHUKAVACH-Mission-Report.pdf')
+}
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
@@ -1196,7 +1614,32 @@ function App() {
 
         </section>
 
-      </main>
+            </main>
+
+      {showReportPopup && (
+        <div className="report-popup-overlay">
+          <div className="report-popup">
+            <h2>MISSION COMPLETED</h2>
+
+            <p>The rover mission has ended successfully.</p>
+
+            <p>
+              Mission Duration:{' '}
+              <strong>{formatMissionTime()}</strong>
+            </p>
+
+            <div className="report-popup-actions">
+              <button onClick={() => setShowReportPopup(false)}>
+                CLOSE
+              </button>
+
+              <button onClick={generateMissionReport}>
+  GENERATE REPORT
+</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
