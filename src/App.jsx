@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 
 import { evaluateSafety } from './utils/safetyEvaluator'
 
+import { prototypeSensorData } from './utils/prototypeData'
+
 import {
   LineChart,
   Line,
@@ -26,14 +28,7 @@ function App() {
   const [missionAlerts, setMissionAlerts] = useState([])
   const [showReportPopup, setShowReportPopup] = useState(false)
 
-  const [sensorData, setSensorData] = useState({
-    oxygen: 20.9,
-    co2: 380,
-    methane: 0.1,
-    temperature: 22.5,
-    humidity: 65,
-    pressure: 101.3,
-  })
+  const [sensorData, setSensorData] = useState(prototypeSensorData)
 
   const sensorDataRef = useRef(sensorData)
 
