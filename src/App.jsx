@@ -2,6 +2,8 @@ import './App.css'
 
 import { useEffect, useRef, useState } from 'react'
 
+import { evaluateSafety } from './utils/safetyEvaluator'
+
 import {
   LineChart,
   Line,
@@ -63,34 +65,7 @@ function App() {
       },
     ])
 
-    const alerts = []
-
-    if (currentSensors.oxygen < safetyLimits.oxygenMin) {
-      alerts.push(`Low Oxygen: ${currentSensors.oxygen}%`)
-    }
-
-    if (currentSensors.co2 > safetyLimits.co2Max) {
-      alerts.push(`High CO₂: ${currentSensors.co2} ppm`)
-    }
-
-    if (currentSensors.methane > safetyLimits.methaneMax) {
-      alerts.push(`High Methane: ${currentSensors.methane}%`)
-    }
-
-    if (currentSensors.temperature > safetyLimits.temperatureMax) {
-      alerts.push(`High Temperature: ${currentSensors.temperature}°C`)
-    }
-
-    if (currentSensors.humidity > safetyLimits.humidityMax) {
-      alerts.push(`High Humidity: ${currentSensors.humidity}%`)
-    }
-
-    if (
-      currentSensors.pressure < safetyLimits.pressureMin ||
-      currentSensors.pressure > safetyLimits.pressureMax
-    ) {
-      alerts.push(`Abnormal Air Pressure: ${currentSensors.pressure} kPa`)
-    }
+    const alerts = evaluateSafety(currentSensors)
 
     if (alerts.length > 0) {
       setMissionAlerts((existingAlerts) => [
