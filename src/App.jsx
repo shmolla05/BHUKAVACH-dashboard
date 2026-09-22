@@ -6,6 +6,7 @@ import { prototypeSensorData } from './utils/prototypeData'
 import ReportPopup from './components/ReportPopup'
 import SensorCard from './components/SensorCard'
 import CameraPanel from './components/CameraPanel'
+import StatusPanel from './components/StatusPanel'
 
 import {
   LineChart,
@@ -266,96 +267,15 @@ function App() {
 
         <section className="overview-grid">
 
-          {/* ROVER STATUS */}
+          <StatusPanel
+  roverActive={roverActive}
+  handleRoverToggle={handleRoverToggle}
+  isOnline={isOnline}
+  battery={battery}
+  formatMissionTime={formatMissionTime}
+/>
 
-          <div className="status-card">
-
-            <h3>ROVER STATUS</h3>
-
-            <div
-              className={`status-value rover-clickable ${
-                roverActive
-                  ? 'rover-active'
-                  : 'rover-inactive'
-              }`}
-              onClick={handleRoverToggle}
-            >
-              {roverActive
-                ? 'ACTIVE'
-                : 'NOT ACTIVE'}
-            </div>
-
-            <p>
-              Remote rover connection
-            </p>
-
-          </div>
-
-
-          {/* COMMUNICATION */}
-
-          <div className="status-card">
-
-            <h3>COMMUNICATION</h3>
-
-            <div
-              className={`status-value ${
-                isOnline
-                  ? 'communication-active'
-                  : 'communication-inactive'
-              }`}
-            >
-              {isOnline
-                ? 'ONLINE'
-                : 'OFFLINE'}
-            </div>
-
-            <p>
-              Communication link
-            </p>
-
-          </div>
-
-
-          {/* BATTERY */}
-
-          <div className="status-card">
-
-            <h3>BATTERY</h3>
-
-            <div className="status-value">
-
-              {battery !== null
-                ? `${battery}%`
-                : '--%'}
-
-            </div>
-
-            <p>
-              Device battery
-            </p>
-
-          </div>
-
-
-          {/* MISSION TIME */}
-
-          <div className="status-card">
-
-            <h3>MISSION TIME</h3>
-
-            <div className="status-value">
-              {formatMissionTime()}
-            </div>
-
-            <p>
-              Current operation
-            </p>
-
-          </div>
-
-        </section>
-
+</section>
 
         {/* PROTOTYPE SENSOR INPUT */}
 
