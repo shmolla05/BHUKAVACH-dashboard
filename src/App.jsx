@@ -10,6 +10,7 @@ import StatusPanel from './components/StatusPanel'
 import SensorInputPanel from './components/SensorInputPanel'
 import EnvironmentalMonitoring from './components/EnvironmentalMonitoring'
 import MissionData from './components/MissionData'
+import SystemStatus from './components/SystemStatus'
 
 import {
   LineChart,
@@ -297,33 +298,10 @@ function App() {
 
         <CameraPanel roverActive={roverActive} />
 
-        {/* SYSTEM STATUS */}
-
-        <section className="alert-panel">
-
-          <h2>
-            SYSTEM STATUS
-          </h2>
-
-          <div
-            className={
-              hasAlert
-                ? 'alert-status'
-                : 'normal-status'
-            }
-          >
-
-            {hasAlert
-              ? alerts.map((alert, index) => (
-                  <div key={index}>
-                    ⚠ {alert}
-                  </div>
-                ))
-              : '● NORMAL'}
-
-          </div>
-
-        </section>
+        <SystemStatus
+  hasAlert={hasAlert}
+  alerts={alerts}
+/>
 
             </main>
 
