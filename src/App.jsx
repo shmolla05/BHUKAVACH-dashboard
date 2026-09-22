@@ -1,10 +1,9 @@
 import './App.css'
 
 import { useEffect, useRef, useState } from 'react'
-
 import { evaluateSafety } from './utils/safetyEvaluator'
-
 import { prototypeSensorData } from './utils/prototypeData'
+import ReportPopup from './components/ReportPopup'
 
 import {
   LineChart,
@@ -1225,39 +1224,16 @@ function App() {
 
             </main>
 
-      {showReportPopup && (
-        <div className="report-popup-overlay">
-          <div className="report-popup">
-            <h2>MISSION COMPLETED</h2>
-
-            <p>The rover mission has ended successfully.</p>
-
-            <p>
-              Mission Duration:{' '}
-              <strong>{formatMissionTime()}</strong>
-            </p>
-
-            <div className="report-popup-actions">
-              <button onClick={() => setShowReportPopup(false)}>
-                CLOSE
-              </button>
-
-              <button
-  onClick={() =>
-    createMissionReport({
-      missionHistory,
-      missionAlerts,
-      sensorData,
-      missionSeconds,
-    })
-  }
->
-  GENERATE REPORT
-</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ReportPopup
+  showReportPopup={showReportPopup}
+  setShowReportPopup={setShowReportPopup}
+  formatMissionTime={formatMissionTime}
+  missionHistory={missionHistory}
+  missionAlerts={missionAlerts}
+  sensorData={sensorData}
+  missionSeconds={missionSeconds}
+  createMissionReport={createMissionReport}
+/>
 
     </div>
   )
