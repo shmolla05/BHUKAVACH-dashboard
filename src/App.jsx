@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { evaluateSafety } from './utils/safetyEvaluator'
 import { prototypeSensorData } from './utils/prototypeData'
 import ReportPopup from './components/ReportPopup'
+import SensorCard from './components/SensorCard'
 
 import {
   LineChart,
@@ -739,136 +740,47 @@ function App() {
 
             <div className="sensor-grid">
 
-              {/* OXYGEN */}
+              <SensorCard
+  label="O₂"
+  value={sensorData.oxygen}
+  unit="%"
+  danger={safetyStatus.oxygen}
+/>
 
-              <div className="sensor-card">
+              <SensorCard
+  label="CO₂"
+  value={sensorData.co2}
+  unit="ppm"
+  danger={safetyStatus.co2}
+/>
 
-                <span>
-                  O₂
+              <SensorCard
+  label="CH₄"
+  value={sensorData.methane}
+  unit="%"
+  danger={safetyStatus.methane}
+/>
+             
+                  <SensorCard
+  label="TEMPERATURE"
+  value={sensorData.temperature}
+  unit="°C"
+  danger={safetyStatus.temperature}
+/>
 
-                  {safetyStatus.oxygen && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
+              <SensorCard
+  label="HUMIDITY"
+  value={sensorData.humidity}
+  unit="%"
+  danger={safetyStatus.humidity}
+/>
 
-                </span>
-
-                <strong>
-                  {sensorData.oxygen} %
-                </strong>
-
-              </div>
-
-
-              {/* CO2 */}
-
-              <div className="sensor-card">
-
-                <span>
-                  CO₂
-
-                  {safetyStatus.co2 && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
-
-                </span>
-
-                <strong>
-                  {sensorData.co2} ppm
-                </strong>
-
-              </div>
-
-
-              {/* METHANE */}
-
-              <div className="sensor-card">
-
-                <span>
-                  CH₄
-
-                  {safetyStatus.methane && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
-
-                </span>
-
-                <strong>
-                  {sensorData.methane} %
-                </strong>
-
-              </div>
-
-
-              {/* TEMPERATURE */}
-
-              <div className="sensor-card">
-
-                <span>
-                  TEMPERATURE
-
-                  {safetyStatus.temperature && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
-
-                </span>
-
-                <strong>
-                  {sensorData.temperature} °C
-                </strong>
-
-              </div>
-
-
-              {/* HUMIDITY */}
-
-              <div className="sensor-card">
-
-                <span>
-                  HUMIDITY
-
-                  {safetyStatus.humidity && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
-
-                </span>
-
-                <strong>
-                  {sensorData.humidity} %
-                </strong>
-
-              </div>
-
-
-              {/* AIR PRESSURE */}
-
-              <div className="sensor-card">
-
-                <span>
-                  AIR PRESSURE
-
-                  {safetyStatus.pressure && (
-                    <b className="danger-indicator">
-                      ⚠
-                    </b>
-                  )}
-
-                </span>
-
-                <strong>
-                  {sensorData.pressure} kPa
-                </strong>
-
-              </div>
+              <SensorCard
+  label="AIR PRESSURE"
+  value={sensorData.pressure}
+  unit="kPa"
+  danger={safetyStatus.pressure}
+/>
 
             </div>
 
