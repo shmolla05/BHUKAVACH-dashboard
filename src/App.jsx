@@ -12,16 +12,6 @@ import EnvironmentalMonitoring from './components/EnvironmentalMonitoring'
 import MissionData from './components/MissionData'
 import SystemStatus from './components/SystemStatus'
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts'
-
 import { generateMissionReport as createMissionReport } from './utils/reportGenerator'
 
 function App() {
