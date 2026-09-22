@@ -5,6 +5,7 @@ import { evaluateSafety } from './utils/safetyEvaluator'
 import { prototypeSensorData } from './utils/prototypeData'
 import ReportPopup from './components/ReportPopup'
 import SensorCard from './components/SensorCard'
+import CameraPanel from './components/CameraPanel'
 
 import {
   LineChart,
@@ -1040,71 +1041,7 @@ function App() {
 
 </section>
 
-        {/* CAMERAS */}
-
-        <section className="visual-grid">
-
-          {/* HD CAMERA */}
-
-          <div className="camera-panel">
-
-            <div className="panel-header">
-
-              <h2>
-                HD CAMERA
-              </h2>
-
-              <span>
-                {roverActive
-                  ? 'CONNECTED'
-                  : 'NOT CONNECTED'}
-              </span>
-
-            </div>
-
-
-            <div className="camera-placeholder">
-
-              {roverActive
-                ? 'LIVE CAMERA FEED'
-                : 'ROVER NOT CONNECTED'}
-
-            </div>
-
-          </div>
-
-
-          {/* THERMAL CAMERA */}
-
-          <div className="camera-panel">
-
-            <div className="panel-header">
-
-              <h2>
-                THERMAL CAMERA
-              </h2>
-
-              <span>
-                {roverActive
-                  ? 'CONNECTED'
-                  : 'NOT CONNECTED'}
-              </span>
-
-            </div>
-
-
-            <div className="camera-placeholder thermal">
-
-              {roverActive
-                ? 'LIVE THERMAL FEED'
-                : 'ROVER NOT CONNECTED'}
-
-            </div>
-
-          </div>
-
-        </section>
-
+        <CameraPanel roverActive={roverActive} />
 
         {/* SYSTEM STATUS */}
 
