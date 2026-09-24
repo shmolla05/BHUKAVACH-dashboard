@@ -100,6 +100,13 @@ function App() {
       sensorData.pressure > safetyLimits.pressureMax,
   }
 
+  const alertAudioRef = useRef(null)
+
+  useEffect(() => {
+  alertAudioRef.current = new Audio('/sounds/warning.mp3')
+  alertAudioRef.current.loop = true
+}, [])
+
   const alerts = []
 
   if (safetyStatus.oxygen) {
@@ -127,6 +134,19 @@ function App() {
   }
 
   const hasAlert = alerts.length > 0
+
+  useEffect(() => {
+  const audio = alertAudioRef.current
+
+  if (!audio) return
+
+  if (hasAlert) {
+    audio.play().catch(() => {})
+  } else {
+    audio.pause()
+    audio.currentTime = 0
+  }
+}, [hasAlert])
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
 
