@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { evaluateSafety } from './utils/safetyEvaluator'
 import { prototypeSensorData } from './utils/prototypeData'
 import ReportPopup from './components/ReportPopup'
-import SensorCard from './components/SensorCard'
 import CameraPanel from './components/CameraPanel'
 import StatusPanel from './components/StatusPanel'
 import SensorInputPanel from './components/SensorInputPanel'
@@ -196,15 +195,6 @@ function App() {
       minutes
     ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
   }
-
-  const formatMissionSeconds = (totalSeconds) => {
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-
-  return `${String(minutes).padStart(2, '0')}:${String(
-    seconds
-  ).padStart(2, '0')}`
-}
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
