@@ -201,37 +201,27 @@ export const generateMissionReport = ({
     },
   })
 
-  let temperatureGraphY
+   const addParameterGraph = ({
+    title,
+    key,
+    unit,
+    startY,
+    }) => {
+    if (missionHistory.length === 0) {
+      return
+    }
 
-if (doc.lastAutoTable.finalY > 210) {
-  doc.addPage()
-  temperatureGraphY = 25
-} else {
-  temperatureGraphY =
-    doc.lastAutoTable.finalY + 15
-}
-
-  doc.setFontSize(14)
-  doc.text(
-    'Temperature Trend',
-    14,
-    temperatureGraphY
-  )
-
-  if (missionHistory.length > 0) {
     const graphStartX = 30
-    const graphStartY =
-      temperatureGraphY + 10
-
+    const graphStartY = startY
     const graphWidth = 155
-    const graphHeight = 70
+    const graphHeight = 60
 
-    const temperatures = missionHistory.map(
-      (data) => Number(data.temperature)
+    const values = missionHistory.map(
+      (data) => Number(data[key])
     )
 
-    const actualMin = Math.min(...temperatures)
-    const actualMax = Math.max(...temperatures)
+    const actualMin = Math.min(...values)
+    const actualMax = Math.max(...values)
 
     let graphMin
     let graphMax
@@ -248,6 +238,10 @@ if (doc.lastAutoTable.finalY > 210) {
     }
 
     const graphRange = graphMax - graphMin
+
+    doc.setFontSize(14)
+    doc.setTextColor(0, 0, 0)
+    doc.text(title, 14, graphStartY - 8)
 
     doc.setDrawColor(120, 120, 120)
 
@@ -268,7 +262,7 @@ if (doc.lastAutoTable.finalY > 210) {
         graphHeight -
         ratio * graphHeight
 
-      const temperature =
+      const value =
         graphMin + ratio * graphRange
 
       doc.setDrawColor(220, 220, 220)
@@ -285,7 +279,7 @@ if (doc.lastAutoTable.finalY > 210) {
       doc.setTextColor(40, 40, 40)
 
       doc.text(
-        `${temperature.toFixed(1)} °C`,
+        `${value.toFixed(2)} ${unit}`,
         8,
         y + 2
       )
@@ -364,54 +358,70 @@ if (doc.lastAutoTable.finalY > 210) {
       const y1 =
         graphStartY +
         graphHeight -
-        ((current.temperature - graphMin) /
+        ((Number(current[key]) - graphMin) /
           graphRange) *
           graphHeight
 
       const y2 =
         graphStartY +
         graphHeight -
-        ((next.temperature - graphMin) /
+        ((Number(next[key]) - graphMin) /
           graphRange) *
           graphHeight
 
       doc.line(x1, y1, x2, y2)
     }
 
-    if (missionHistory.length > 1) {
-      const constantY =
-        graphStartY +
-        graphHeight -
-        ((actualMin - graphMin) /
-          graphRange) *
-          graphHeight
-
-      doc.setDrawColor(0, 0, 0)
-      doc.setLineWidth(1.5)
-
-      doc.line(
-        graphStartX,
-        constantY,
-        graphStartX + graphWidth,
-        constantY
-      )
-
-      missionHistory.forEach((data, index) => {
-        const x =
-          graphStartX +
-          (index / (missionHistory.length - 1)) *
-            graphWidth
-
-        doc.setFillColor(0, 0, 0)
-        doc.circle(
-          x,
-          constantY,
-          1.5,
-          'F'
-        )
-      })
-    }
+    doc.setLineWidth(1)
   }
+
+  doc.addPage()
+
+  addParameterGraph({
+  title: 'Oxygen (O₂) Trend',
+  key: 'oxygen',
+  unit: '%',
+  startY: 25,
+})
+
+  addParameterGraph({
+    title: 'Carbon Dioxide (CO₂) Trend',
+    key: 'co2',
+    unit: 'ppm',
+    startY: 125,
+  })
+
+  doc.addPage()
+
+  addParameterGraph({
+    title: 'Methane (CH₄) Trend',
+    key: 'methane',
+    unit: '%',
+    startY: 25,
+  })
+
+  addParameterGraph({
+    title: 'Temperature Trend',
+    key: 'temperature',
+    unit: '°C',
+    startY: 125,
+  })
+
+  doc.addPage()
+
+  addParameterGraph({
+    title: 'Humidity Trend',
+    key: 'humidity',
+    unit: '%',
+    startY: 25,
+  })
+
+  addParameterGraph({
+    title: 'Air Pressure Trend',
+    key: 'pressure',
+    unit: 'kPa',
+    startY: 125,
+  })
 
   doc.save('BHUKAVACH-Mission-Report.pdf')
 }
