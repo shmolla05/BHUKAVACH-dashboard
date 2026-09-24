@@ -21,12 +21,15 @@ const CameraPanel = ({ roverActive }) => {
         </div>
 
         <div className="camera-placeholder">
-
-          {roverActive
-            ? 'LIVE CAMERA FEED'
-            : 'ROVER NOT CONNECTED'}
-
-        </div>
+  {roverActive ? (
+    <img
+      src="http://192.0.0.4:8080/video"
+      alt="Live rover camera feed"
+    />
+  ) : (
+    'ROVER NOT CONNECTED'
+  )}
+</div>
 
       </div>
 
